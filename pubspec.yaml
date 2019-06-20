@@ -1,8 +1,9 @@
 name: flutter_to_mobilepay
-description: Flutter plugin to integrate with MobilePay
+description: Flutter plugin to integrate with MobilePay using the MobilePay AppSwitch SDK
 version: 1.0.0
 author: Andi Robin Halgren Semler <andirobinsemler@gmail.com>
 homepage: https://github.com/semlette/flutter_to_mobilepay
+repository: https://github.com/semlette/flutter_to_mobilepay
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
