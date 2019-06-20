@@ -2,6 +2,7 @@
 #import "MobilePayManager.h"
 
 @interface FlutterToMobilepayPlugin () <FlutterStreamHandler> {
+    MobilePayCountry country;
     FlutterEventSink events;
 }
 @end
@@ -31,15 +32,22 @@
     if ([@"initializeMobilePay" isEqualToString:call.method]) {
         // Set up MobilePay
         NSDictionary *args = call.arguments;
+        country = [self getMobilePayCountryFromString:args[@"country"]];
         [[MobilePayManager sharedInstance]
          setupWithMerchantId:args[@"merchant_id"]
          merchantUrlScheme:args[@"url_scheme"]
-         country:[self getMobilePayCountryFromString:args[@"country"]]];
+         country:country];
         
         result(nil);
     } else if ([@"isInstalled" isEqualToString:call.method]) {
-        // TODO, actually check if the app is installed
-        result([NSNumber numberWithBool:1]);
+        // Checks if the app is installed for the current country (selected in initialization method)
+        BOOL isInstalled = [[MobilePayManager sharedInstance]isMobilePayInstalled:country];
+        result([NSNumber numberWithBool:isInstalled]);
+    } else if ([@"isLocaleInstalled" isEqualToString:call.method]) {
+        // Checks if the app is installed for the given country
+        MobilePayCountry checkCountry = [self getMobilePayCountryFromString:call.arguments];
+        BOOL isInstalled = [[MobilePayManager sharedInstance]isMobilePayInstalled:checkCountry];
+        result([NSNumber numberWithBool:isInstalled]);
     } else if ([@"createPayment" isEqualToString:call.method]) {
         NSDictionary *args = call.arguments;
         MobilePayPayment *payment = [[MobilePayPayment alloc]

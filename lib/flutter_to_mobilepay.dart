@@ -80,21 +80,22 @@ class MobilePay {
     });
   }
 
+  /// isInstalled checks if the MobileApp app for the current country (selected in
+  /// [MobilePay.initialize]) is installed.
   static Future<bool> isInstalled(
       {
 
-      /// country checks if the MobilePay app for the given country is installed.
-      /// country is ignored on Android.
-      ///
-      /// MobilePay on iOS has a different app for each country it is available in.
-      /// If this is non-null it will only check for a specific variant.
+      /// country targets the MobilePay app for another country.
+      /// This only works on iOS
       Country country}) async {
     _throwIfUninitialized();
     try {
       Future<bool> future;
       if (Platform.isIOS && country != null) {
-        // TODO: Check for specific country variant
-        future = _channel.invokeMethod("isInstalled");
+        future = _channel.invokeMethod(
+          "isLocaleInstalled",
+          _countryToString(country),
+        );
       } else {
         future = _channel.invokeMethod("isInstalled");
       }
