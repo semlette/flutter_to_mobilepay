@@ -56,8 +56,8 @@ Add the package as a dependency to your project
 
 ```yaml
 dependencies:
-    # ...
-    flutter_to_mobilepay: ^1.0.0
+  # ...
+  flutter_to_mobilepay: ^1.0.0
 ```
 
 Android should be ready to go, however iOS requires a bit more work.

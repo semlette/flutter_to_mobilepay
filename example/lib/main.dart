@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_to_mobilepay/flutter_to_mobilepay.dart';
-import 'package:uuid/uuid.dart';
 
 void main() async {
   await MobilePay.initialize(
@@ -57,7 +56,7 @@ class _MyAppState extends State<MyApp> {
                     onPressed: _isInstalled
                         ? () async {
                             Payment payment = Payment(
-                              orderID: Uuid().v4(),
+                              orderID: "generate custom id here",
                               price: 10,
                             );
                             try {

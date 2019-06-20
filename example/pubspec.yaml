@@ -8,6 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_to_mobilepay:
+    path: ../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -16,11 +18,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  uuid: 2.0.2
-
-  flutter_to_mobilepay:
-    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
