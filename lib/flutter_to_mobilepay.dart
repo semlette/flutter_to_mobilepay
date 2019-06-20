@@ -95,10 +95,10 @@ class MobilePay {
     _throwIfUninitialized();
     try {
       Future<bool> future;
-      if (Platform.isIOS) {
+      if (Platform.isIOS && country != null) {
+        // TODO: Check for specific country variant
         future = _channel.invokeMethod("isInstalled");
       } else {
-        // TODO: Check for specific country variant
         future = _channel.invokeMethod("isInstalled");
       }
       final installed = await future;

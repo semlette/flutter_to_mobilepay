@@ -1,6 +1,6 @@
 # flutter_to_mobilepay
 
-Flutter to MobilePay provides easy integration with [MobilePay](https://developer.mobilepay.dk/). It uses the [MobilePay AppSwitch SDK](https://developer.mobilepay.dk/faq/appswitch) to switch to the MobilePay, perform the payment and then return the transaction information back to
+Flutter to MobilePay provides easy integration with [MobilePay](https://developer.mobilepay.dk/). It uses the [MobilePay AppSwitch SDK](https://developer.mobilepay.dk/faq/appswitch) to switch to the MobilePay app, perform the payment and then return the transaction information back to
 Flutter.
 
 Flutter to MobilePay works on both Android\* and iOS.

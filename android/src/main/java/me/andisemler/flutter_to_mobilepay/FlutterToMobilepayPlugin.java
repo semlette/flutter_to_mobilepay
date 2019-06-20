@@ -53,7 +53,6 @@ public class FlutterToMobilepayPlugin implements MethodCallHandler, EventChannel
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
             case "initializeMobilePay":
-                // TODO: Hent merchantID fra methodCall argumenter
                 Map<String, String> initArgs = (Map<String, String>) call.arguments;
                 try {
                     MobilePay.getInstance().init(
