@@ -73,36 +73,78 @@
         self->events(transaction);
     } error:^(NSError * _Nonnull error) {
         if (!self->events) {
-            NSLog(@"MobilePay completed a payment, but there was no listeners");
+            NSLog(@"MobilePay returned payment with error, but there was no listeners");
             return;
         }
+
         NSDictionary *dict = error.userInfo;
         NSString *errorMessage = [dict valueForKey:NSLocalizedFailureReasonErrorKey];
-        NSLog(@"MobilePay purchase failed:  Error code '%li' and message '%@'",(long)error.code,errorMessage);
-        
-        //TODO: show an appropriate error message to the user. Check MobilePayManager.h for a complete description of the error codes
-        
-        //An example of using the MobilePayErrorCode enum
-        //if (error.code == MobilePayErrorCodeUpdateApp) {
-        //    NSLog(@"You must update your MobilePay app");
-        //}
+        self->events([self flutterErrorFromMobilePayError:(long)error.code message: errorMessage]);
     } cancel:^(MobilePayCancelledPayment * _Nullable mobilePayCancelledPayment) {
-        NSLog(@"MobilePay purchase with order id '%@' cancelled by user", mobilePayCancelledPayment.orderId);
+        if (!self->events) {
+            NSLog(@"MobilePay returned a cancelled payment, but there was no listeners");
+            return;
+        }
+        self->events([FlutterError errorWithCode:@"CancelledPayment" message:@"The user cancelled the payment" details: [mobilePayCancelledPayment orderId]]);
     }];
     
     return YES;
 }
 
+- (FlutterError*)flutterErrorFromMobilePayError:(long)code message:(NSString*)message {
+    NSString *formattedCode;
+    switch (code) {
+            case 0:
+            formattedCode = @"MobilePayErrorUnknown";
+            break;
+            case 1:
+            formattedCode = @"MobilePayErrorInvalidParameters";
+            break;
+            case 2:
+            formattedCode = @"MobilePayErrorMerchantValidationFailed";
+            break;
+            case 3:
+            formattedCode = @"MobilePayErrorUpdateApp";
+            break;
+            case 4:
+            formattedCode = @"MobilePayErrorMerchantNotValid";
+            break;
+            case 5:
+            formattedCode = @"MobilePayErrorHMACNotValid";
+            break;
+            case 6:
+            formattedCode = @"MobilePayErrorTimeout";
+            break;
+            case 7:
+            formattedCode = @"MobilePayErrorLimitsExceeded";
+            break;
+            case 8:
+            formattedCode = @"MobilePayErrorMerchantTimeout";
+            break;
+            case 9:
+            formattedCode = @"MobilePayErrorInvalidSignature";
+            break;
+            case 10:
+            formattedCode = @"MobilePayErrorSDKIsOutdated"; // hah, as if
+            break;
+            case 11:
+            formattedCode = @"MobilePayErrorOrderIDAlreadyUsed";
+            break;
+            case 12:
+            formattedCode = @"MobilePayErrorPaymentRejectedFraud";
+            break;
+    }
+    return [FlutterError errorWithCode:formattedCode message:message details: nil];
+}
+
 #pragma mark FlutterStreamHandler impl
 
 - (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    NSLog(@"new listener");
     events = eventSink;
     return nil;
 }
 
 - (FlutterError*)onCancelWithArguments:(id)arguments {
-    NSLog(@"canceled listener");
     events = nil;
     return nil;
 }

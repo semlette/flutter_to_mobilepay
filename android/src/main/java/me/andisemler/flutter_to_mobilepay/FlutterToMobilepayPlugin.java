@@ -92,8 +92,7 @@ public class FlutterToMobilepayPlugin implements MethodCallHandler, EventChannel
             MobilePay.getInstance().handleResult(resultCode, data, new ResultCallback() {
                 @Override
                 public void onSuccess(SuccessResult result) {
-                    // The payment succeeded - you can deliver the product.
-                    Log.i(LOG_TAG, "success");
+                    // The payment succeeded
                     if (events != null) {
                         Map<String, String> transaction = new HashMap<>();
                         transaction.put("transaction_id", result.getTransactionId());
@@ -108,14 +107,64 @@ public class FlutterToMobilepayPlugin implements MethodCallHandler, EventChannel
 
                 @Override
                 public void onFailure(FailureResult result) {
-                    // The payment failed - show an appropriate error message to the user. Consult the MobilePay class documentation for possible error codes.
-                    Log.e(LOG_TAG, "failure: " + result.getErrorMessage());
+                    // The payment failed
+                    String code = "";
+                    switch (result.getErrorCode()) {
+                        case 0:
+                            code = "MobilePayErrorUnknown";
+                            break;
+                        case 1:
+                            code = "MobilePayErrorInvalidParameters";
+                            break;
+                        case 2:
+                            code = "MobilePayErrorMerchantValidationFailed";
+                            break;
+                        case 3:
+                            code = "MobilePayErrorUpdateApp";
+                            break;
+                        case 4:
+                            code = "MobilePayErrorMerchantNotValid";
+                            break;
+                        case 5:
+                            code = "MobilePayErrorHMACNotValid";
+                            break;
+                        case 6:
+                            code = "MobilePayErrorTimeout";
+                            break;
+                        case 7:
+                            code = "MobilePayErrorLimitsExceeded";
+                            break;
+                        case 8:
+                            code = "MobilePayErrorMerchantTimeout";
+                            break;
+                        case 9:
+                            code = "MobilePayErrorInvalidSignature";
+                            break;
+                        case 10:
+                            code = "MobilePayErrorSDKIsOutdated";
+                            break;
+                        case 11:
+                            code = "MobilePayErrorOrderIDAlreadyUsed";
+                            break;
+                        case 12:
+                            code = "MobilePayErrorPaymentRejectedFraud";
+                            break;
+                    }
+                    if (events != null) {
+                        events.error(code, result.getErrorMessage(), "");
+                    } else {
+                        Log.w(LOG_TAG, "MobilePay return payment with error, but there was no listeners");
+                    }
                 }
 
                 @Override
                 public void onCancel() {
                     // The payment was cancelled.
-                    Log.w(LOG_TAG, "cancelled");
+                    if (events != null) {
+                        events.error("CancelledPayment", "The user cancelled the payment", null);
+                    } else {
+                        Log.w(LOG_TAG, "MobilePay returned a cancelled payment, but there was no listeners");
+                    }
                 }
             });
             return true;
