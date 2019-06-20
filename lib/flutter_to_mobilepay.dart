@@ -43,9 +43,6 @@ class MobilePay {
   ///
   /// You must pass your [merchantID], [country] and [urlScheme] (iOS only) or
   /// the initialization will fail.
-  ///
-  /// On iOS this may thrown a [PlatformException] error if the correct
-  /// MobilePay app is not installed (for example, mismatching countries).
   static Future initialize({
     @required String merchantID,
     @required Country country,
@@ -110,6 +107,9 @@ class MobilePay {
     }
   }
 
+  /// createPayment opens the MobilePay app to process the [payment].
+  /// On iOS this may thrown a [PlatformException] error if the correct
+  /// MobilePay app is not installed (for example, mismatching countries).
   static Future<Transaction> createPayment(Payment payment) async {
     _throwIfUninitialized();
     final args = payment._toMap();
@@ -146,7 +146,8 @@ class MobilePay {
             case "MobilePayErrorSDKIsOutdated":
             case "MobilePayErrorOrderIDAlreadyUsed":
             case "MobilePayErrorPaymentRejectedFraud":
-              completer.completeError(MobilePayError._fromPlatformException(error));
+              completer
+                  .completeError(MobilePayError._fromPlatformException(error));
               break;
           }
         } else {
@@ -169,6 +170,7 @@ class MobilePay {
 class Payment {
   /// price is the total price for the purchase
   final double price;
+
   /// orderID is a custom ID for the order.
   /// The AppSwitch SDK requires the order ID to be unique (per purchase)
   final String orderID;

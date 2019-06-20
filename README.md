@@ -7,6 +7,10 @@ Flutter to MobilePay works on both Android\* and iOS.
 
 \* see caveats further down
 
+## Warning
+
+This plugin has not yet been tested with a real merchant id or in a production application.
+
 ## Usage
 
 ```dart
