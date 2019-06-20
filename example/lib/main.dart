@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_to_mobilepay/flutter_to_mobilepay.dart';
+import 'package:uuid/uuid.dart';
 
 void main() async {
   await MobilePay.initialize(
-    merchantID: TestMerchants.denmark,
+    merchantID: TestMerchantID.denmark,
     country: Country.denmark,
-    urlScheme: "",
+    urlScheme: "flmpexample",
   );
   runApp(MyApp());
 }
@@ -48,22 +49,36 @@ class _MyAppState extends State<MyApp> {
               title: const Text("Create (test) payment"),
               subtitle: Builder(
                 // The reason this is in a Builder has nothing to do with
-                // Flutter to MobilePay, it is because otherwise the
+                // Flutter to MobilePay, but because otherwise the dialogs
+                // could not access something from the context.
                 builder: (context) {
                   return OutlineButton(
                     child: Text("New payment"),
                     onPressed: _isInstalled
                         ? () async {
                             Payment payment = Payment(
-                              orderID: "test order id",
+                              orderID: Uuid().v4(),
                               price: 10,
                             );
                             try {
                               final transaction =
                               await MobilePay.createPayment(payment);
                               // The purchase was successful
-                              print(
-                                "transaction id: ${transaction.id}, withdrawn: ${transaction.withdrawnFromCard}, signature: ${transaction.signature}");
+                              await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Your purchase was successful"),
+                                  content: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text("Transaction id: ${transaction.id}"),
+                                      Text("Order id: ${transaction.orderID}"),
+                                      Text("Total (not) withdrawn: ${transaction.withdrawnFromCard}"),
+                                    ],
+                                  ),
+                                ),
+                              );
                             } on MobilePayError catch (e) {
                               // The MobilePay AppSwitch SDK threw an error
                               switch (e.code) {

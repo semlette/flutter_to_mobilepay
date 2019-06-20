@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_to_mobilepay (0.0.1):
+  - flutter_to_mobilepay (1.0.0):
     - Flutter
     - MobilePay-AppSwitch-SDK
   - MobilePay-AppSwitch-SDK (1.8.1)
@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  flutter_to_mobilepay: 6d854fa8c50b9a9f702567925a503ad33c762789
+  flutter_to_mobilepay: c890d99d4f25d35fa650688f0fe479a29bfdd30c
   MobilePay-AppSwitch-SDK: 6ed36faad59e4cdd1bc8f8fde8f4a9f2d1e4cb2c
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497

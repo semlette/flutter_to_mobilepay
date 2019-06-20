@@ -30,26 +30,25 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"initializeMobilePay" isEqualToString:call.method]) {
         // Set up MobilePay
-        // TODO: Get merchantId from arguments
-        // TODO: Get merchantUrlScheme from arguments
-        // TODO: Get country from arguments
+        NSDictionary *args = call.arguments;
         [[MobilePayManager sharedInstance]
-         setupWithMerchantId:@"APPDK0000000000"
-         merchantUrlScheme:@"flmpexample"
-         country:MobilePayCountry_Denmark];
+         setupWithMerchantId:args[@"merchant_id"]
+         merchantUrlScheme:args[@"url_scheme"]
+         country:[self getMobilePayCountryFromString:args[@"country"]]];
         
         result(nil);
     } else if ([@"isInstalled" isEqualToString:call.method]) {
         // TODO, actually check if the app is installed
         result([NSNumber numberWithBool:1]);
     } else if ([@"createPayment" isEqualToString:call.method]) {
-        // TODO: Get order id from arguments
-        // TODO: Get price from arguments
-        result(nil);
-        MobilePayPayment *payment = [[MobilePayPayment alloc]initWithOrderId:@"test order id" productPrice:10];
+        NSDictionary *args = call.arguments;
+        MobilePayPayment *payment = [[MobilePayPayment alloc]
+                                     initWithOrderId:args[@"order_id"]
+                                     productPrice:[args[@"price"] floatValue]];
         [[MobilePayManager sharedInstance]beginMobilePaymentWithPayment:payment error:^(NSError * _Nonnull error) {
-            printf("error");
+            result([FlutterError errorWithCode:[NSString stringWithFormat:@"%ld", (long)error.code] message:error.localizedDescription details:error.localizedFailureReason]);
         }];
+        result(nil);
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -135,6 +134,15 @@
             break;
     }
     return [FlutterError errorWithCode:formattedCode message:message details: nil];
+}
+
+- (MobilePayCountry)getMobilePayCountryFromString:(NSString*)string {
+    if ([@"denmark" isEqualToString:string]) {
+        return MobilePayCountry_Denmark;
+    } else if ([@"finland" isEqualToString:string]) {
+        return MobilePayCountry_Finland;
+    }
+    return MobilePayCountry_Norway;
 }
 
 #pragma mark FlutterStreamHandler impl

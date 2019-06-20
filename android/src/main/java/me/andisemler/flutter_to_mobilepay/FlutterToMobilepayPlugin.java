@@ -54,8 +54,16 @@ public class FlutterToMobilepayPlugin implements MethodCallHandler, EventChannel
         switch (call.method) {
             case "initializeMobilePay":
                 // TODO: Hent merchantID fra methodCall argumenter
-                MobilePay.getInstance().init("APPDK0000000000", Country.DENMARK);
-                result.success(null);
+                Map<String, String> initArgs = (Map<String, String>) call.arguments;
+                try {
+                    MobilePay.getInstance().init(
+                            initArgs.get("merchant_id"),
+                            countryFromString(initArgs.get("country"))
+                    );
+                    result.success(null);
+                } catch (Exception e) {
+                    result.error("Exception", e.getMessage(), null);
+                }
                 break;
             case "isInstalled":
                 result.success(isInstalled());
@@ -83,6 +91,19 @@ public class FlutterToMobilepayPlugin implements MethodCallHandler, EventChannel
         }
         Intent paymentIntent = MobilePay.getInstance().createPaymentIntent(payment);
         activity.startActivityForResult(paymentIntent, MOBILEPAY_REQUEST_CODE);
+    }
+
+    private Country countryFromString(String string) throws Exception {
+        switch (string) {
+            case "denmark":
+                return Country.DENMARK;
+            case "finland":
+                return Country.FINLAND;
+            case "norway":
+                return Country.NORWAY;
+            default:
+                throw new Exception("Unknown country");
+        }
     }
 
     @Override

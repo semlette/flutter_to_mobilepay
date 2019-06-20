@@ -4,7 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-class TestMerchants {
+class TestMerchantID {
   static final String denmark = "APPDK0000000000";
   static final String finland = "APPFI0000000000";
   static final String norway = "APPNO0000000000";
@@ -16,6 +16,19 @@ enum Country {
   norway,
 }
 
+String _countryToString(Country country) {
+  switch (country) {
+    case Country.denmark:
+      return "denmark";
+    case Country.finland:
+      return "finland";
+    case Country.norway:
+      return "norway";
+    default:
+      throw Exception("Unknown country $country");
+  }
+}
+
 class MobilePay {
   static bool _initialized = false;
   static const MethodChannel _channel =
@@ -25,6 +38,14 @@ class MobilePay {
 
   static Stream<Transaction> _paymentStream;
 
+  /// initialize initializes the AppSwitch SDK and the plugin. This must be called
+  /// before any other method on [MobilePay] is used.
+  ///
+  /// You must pass your [merchantID], [country] and [urlScheme] (iOS only) or
+  /// the initialization will fail.
+  ///
+  /// On iOS this may thrown a [PlatformException] error if the correct
+  /// MobilePay app is not installed (for example, mismatching countries).
   static Future initialize({
     @required String merchantID,
     @required Country country,
@@ -32,7 +53,7 @@ class MobilePay {
     /// urlScheme is your app's URL scheme. This is defined in `Info.plist` in
     /// `CFBundleURLTypes[x].CFBundleURLSchemes[x]`. If in doubt, see the installation
     /// steps for iOS.
-    /// urlScheme is required on iOS and is ignored on Android
+    /// urlScheme is required on iOS but ignored on Android
     String urlScheme,
   }) {
     if (!_initialized) {
@@ -53,8 +74,13 @@ class MobilePay {
 
     assert(merchantID != null);
     assert(country != null);
-    // TODO: Send arguments
-    return _channel.invokeMethod("initializeMobilePay");
+    if (Platform.isIOS) assert(urlScheme != null && urlScheme != "");
+
+    return _channel.invokeMethod("initializeMobilePay", {
+      "merchant_id": merchantID,
+      "country": _countryToString(country),
+      "url_scheme": urlScheme,
+    });
   }
 
   static Future<bool> isInstalled(
@@ -141,7 +167,10 @@ class MobilePay {
 }
 
 class Payment {
+  /// price is the total price for the purchase
   final double price;
+  /// orderID is a custom ID for the order.
+  /// The AppSwitch SDK requires the order ID to be unique (per purchase)
   final String orderID;
 
   Payment({

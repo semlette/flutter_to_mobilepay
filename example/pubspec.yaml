@@ -17,6 +17,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  uuid: 2.0.2
+
   flutter_to_mobilepay:
     path: ../
 

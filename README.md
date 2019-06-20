@@ -15,7 +15,7 @@ import "package:uuid/uuid.dart";
 
 void main() async {
     await MobilePay.initialize(
-        merchantID: TestMerchants.denmark,
+        merchantID: TestMerchantID.denmark,
         country: Country.denmark,
         urlScheme: "myapp", // iOS only, see installation
     );
