@@ -27,7 +27,7 @@ class MobilePayButton extends StatelessWidget {
     Widget build(BuildContext context) {
         return RaisedButton(
             child: const Text("Pay with MobilePay"),
-            onPressed: async () {
+            onPressed: () async {
 
                 Payment payment = Payment(
                     orderID: Uuid().v4(),
@@ -104,8 +104,6 @@ If you wish to check if the MobilePay app is installed, you have to add the foll
 
 -   The MobilePay AppSwitch SDK does not target the latest Android SDK version. It uses deprecated APIs on newer versions and is not compatible with Android P at all.
 
--   The MobilePay AppSwitch SDK requires unique order IDs, however non-unique order IDs can be used during development. This plugin **requires** order IDs to be unique due to how the payment callback is implemented.
-
 ## Alternatives
 
 -   [flutter_mobilepay_payment](https://pub.dev/packages/flutter_mobilepay_payment)
@@ -114,4 +112,6 @@ If you wish to check if the MobilePay app is installed, you have to add the foll
 
 ### Implementation
 
-On the native side of things, Flutter to MobilePay is written in Objective C and Java. It does most things by calling the platform with maps as arguments containing the needed data. However the payments are implemented using an EventChannel stream. This is because the payment callback is sent to the Android activity and iOS app delegate, not the function creating the payment. **(TODO: Tjek om det stadig sker)** This is also the reason why order IDs must be unique.
+On the native side of things, Flutter to MobilePay is written in Objective C and Java. It does most things by calling the platform with maps as arguments, containing the needed data. However the payments are implemented using an EventChannel stream. This is because the payment callback is sent to the Android activity and iOS app delegate, not the function creating the payment.
+When the payment callback is received, it transforms it into a map and sends it to Flutter through the EventChannel.
+`createPayment()` awaits the payment and returns it to the user.
