@@ -106,7 +106,7 @@ If you wish to check if the MobilePay app is installed, you have to add the foll
 
 ## Caveats
 
--   The MobilePay AppSwitch SDK does not target the latest Android SDK version. It uses deprecated APIs on newer versions and is not compatible with Android P at all.
+-   The included MobilePay AppSwitch SDK does not target the latest Android SDK version. It uses deprecated APIs on newer versions and is not compatible with Android P at all. Newer versions of the MobilePay AppSwitch SDK fixes this issue.
 
 ## Alternatives
 
